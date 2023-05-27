@@ -1179,7 +1179,7 @@ static int insert_inline_extent_backref(struct btrfs_trans_handle *trans,
 				 u64 root_objectid, u64 owner,
 				 u64 offset, int refs_to_add)
 {
-	struct btrfs_extent_inline_ref *iref;
+	struct btrfs_extent_inline_ref *iref = NULL;
 	int ret;
 
 	ret = lookup_inline_extent_backref(trans, root, path, &iref,
