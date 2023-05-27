@@ -1053,11 +1053,16 @@ static int setup_inline_extent_backref(struct btrfs_root *root,
 	refs += refs_to_add;
 	btrfs_set_extent_refs(leaf, ei, refs);
 
+	if (IS_ERR(ei) || IS_ERR_VALUE(item_offset))
+		return -EOVERFLOW;
+
 	ptr = (unsigned long)ei + item_offset;
 	end = (unsigned long)ei + btrfs_item_size(leaf, path->slots[0]);
 	if (ptr < end - size)
 		memmove_extent_buffer(leaf, ptr + size, ptr,
 				      end - size - ptr);
+	if (IS_ERR_VALUE(ptr))
+		return -EOVERFLOW;
 
 	iref = (struct btrfs_extent_inline_ref *)ptr;
 	btrfs_set_extent_inline_ref_type(leaf, iref, type);
