@@ -6804,8 +6804,15 @@ static int record_extent(struct btrfs_trans_handle *trans,
 
 		ret = btrfs_insert_empty_item(trans, extent_root, path,
 					&ins_key, item_size);
-		if (ret)
+
+		/* already allocated? */
+		if (ret == -EEXIST) {
+			ret = 0;
+			goto exists;
+		}
+		if (ret) {
 			goto fail;
+		}
 
 		leaf = path->nodes[0];
 		ei = btrfs_item_ptr(leaf, path->slots[0],
@@ -6847,6 +6854,7 @@ static int record_extent(struct btrfs_trans_handle *trans,
 		btrfs_release_path(path);
 	}
 
+exists:
 	if (back->is_data) {
 		u64 parent;
 		int i;
