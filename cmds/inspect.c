@@ -1162,12 +1162,15 @@ static int cmd_inspect_list_chunks(const struct cmd_struct *cmd,
 
 				if (ctx.length == ctx.size) {
 					ctx.size += 1024;
-					ctx.stats = realloc(ctx.stats, ctx.size
+					struct list_chunks_entry *tmp;
+					tmp = realloc(ctx.stats, ctx.size
 						* sizeof(ctx.stats[0]));
-					if (!ctx.stats) {
+					if (!tmp) {
 						ret = 1;
 						error_msg(ERROR_MSG_MEMORY, NULL);
 						goto out_nomem;
+					} else {
+						ctx.stats = tmp;
 					}
 				}
 			}
